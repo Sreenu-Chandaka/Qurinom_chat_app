@@ -19,17 +19,19 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    
     context.read<AuthBloc>().add(CheckAuthStatus());
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: const Color(0xFFF2F7FA),
       appBar: AppBar(
-        title: Text('Qurinom Chat - Login'),
-        backgroundColor: Colors.blue,
+        title: const Text('Qurinom Chat - Login'),
+        backgroundColor: const Color(0xFF1565C0),
         foregroundColor: Colors.white,
+        elevation: 4,
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -41,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.redAccent,
               ),
             );
           }
@@ -49,62 +51,48 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocBuilder<AuthBloc, AuthState>(
           builder: (context, state) {
             if (state is AuthLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
 
-            return Padding(
-              padding: EdgeInsets.all(16.0),
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 40),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    size: 80,
-                    color: Colors.blue,
-                  ),
-                  SizedBox(height: 32),
+                  const Icon(Icons.chat_bubble_outline, size: 80, color: Color(0xFF1565C0)),
+                  const SizedBox(height: 20),
                   Card(
-                    elevation: 8,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 6,
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(20.0),
                       child: Column(
                         children: [
-                          TextField(
+                          _buildTextField(
                             controller: _emailController,
-                            decoration: InputDecoration(
-                              labelText: 'Email',
-                              prefixIcon: Icon(Icons.email),
-                              border: OutlineInputBorder(),
-                            ),
+                            label: 'Email',
+                            icon: Icons.email,
                             keyboardType: TextInputType.emailAddress,
                           ),
-                          SizedBox(height: 16),
-                          TextField(
+                          const SizedBox(height: 16),
+                          _buildTextField(
                             controller: _passwordController,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              prefixIcon: Icon(Icons.lock),
-                              border: OutlineInputBorder(),
-                            ),
+                            label: 'Password',
+                            icon: Icons.lock,
                             obscureText: true,
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           DropdownButtonFormField<String>(
                             value: _selectedRole,
                             decoration: InputDecoration(
                               labelText: 'Role',
-                              prefixIcon: Icon(Icons.person),
-                              border: OutlineInputBorder(),
+                              prefixIcon: const Icon(Icons.person),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
-                            items: [
-                              DropdownMenuItem(
-                                value: 'customer',
-                                child: Text('Customer'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'vendor',
-                                child: Text('Vendor'),
-                              ),
+                            items: const [
+                              DropdownMenuItem(value: 'customer', child: Text('Customer')),
+                              DropdownMenuItem(value: 'vendor', child: Text('Vendor')),
                             ],
                             onChanged: (value) {
                               setState(() {
@@ -112,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                               });
                             },
                           ),
-                          SizedBox(height: 24),
+                          const SizedBox(height: 24),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -120,36 +108,41 @@ class _LoginPageState extends State<LoginPage> {
                                 if (_emailController.text.isNotEmpty &&
                                     _passwordController.text.isNotEmpty) {
                                   context.read<AuthBloc>().add(
-                                    LoginRequested(
-                                      email: _emailController.text,
-                                      password: _passwordController.text,
-                                      role: _selectedRole,
-                                    ),
-                                  );
+                                        LoginRequested(
+                                          email: _emailController.text,
+                                          password: _passwordController.text,
+                                          role: _selectedRole,
+                                        ),
+                                      );
                                 }
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
+                                backgroundColor: const Color(0xFF1565C0),
                                 foregroundColor: Colors.white,
-                                padding: EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
-                              child: Text(
-                                'Login',
-                                style: TextStyle(fontSize: 16),
-                              ),
+                              child: const Text('Login', style: TextStyle(fontSize: 16)),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text(
-                    'Test Credentials:\nEmail: swaroop.vass@gmail.com\nPassword: @Tyrion99\nRole: vendor',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 12,
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: const Text(
+                      'Test Credentials:\nEmail: swaroop.vass@gmail.com\nPassword: @Tyrion99\nRole: vendor',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black54, fontSize: 13),
                     ),
                   ),
                 ],
@@ -161,6 +154,28 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: obscureText,
+      style: const TextStyle(fontSize: 14),
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -168,4 +183,3 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 }
-
